@@ -18,19 +18,16 @@ After deployment, save the service URL. Check `https://SERVICE_URL/health` and v
 
 ## 2. Create Neon and preserve the local database data
 
-Create a PostgreSQL database in Neon and copy its **direct** connection string. Keep it private. The existing backup is `server/backups/fashion_db_2026-11-03.dump`; it is intentionally excluded from Git.
+Create a PostgreSQL database in Neon and use its **direct** connection string (turn off **Connection pooling** in the Neon connection dialog). Keep it private. The existing backup is `server/backups/fashion_db_2026-11-03.dump`; it is intentionally excluded from Git.
 
-First apply the checked-in migrations to the **empty Neon database** to create the schema. Then restore only the saved rows so the schema is not recreated over the migrations:
+In PowerShell, run the import helper from `server`. It asks for the connection string with hidden input, applies the checked-in migrations to the empty Neon database, then restores only saved rows:
 
 ```powershell
 cd C:\Users\ACER\Documents\fashion-shop\server
-$env:DATABASE_URL = Read-Host "Paste the Neon direct connection string"
-npx prisma migrate deploy
-pg_restore --data-only --no-owner --no-privileges --dbname="$env:DATABASE_URL" .\backups\fashion_db_2026-11-03.dump
-Remove-Item Env:DATABASE_URL
+.\scripts\import-neon.ps1
 ```
 
-The `pg_restore` command requires PostgreSQL command-line tools. The Neon database must be fresh for this data-only restore. Do not run the old schema dump as a full restore on top of a migrated database.
+The helper uses the installed PostgreSQL 18 `pg_restore`. The Neon database must be fresh for this data-only restore. Do not run the old schema dump as a full restore on top of a migrated database.
 
 ## 3. Deploy the API to Render
 
