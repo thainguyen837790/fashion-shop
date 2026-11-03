@@ -3,7 +3,7 @@ import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import CartDrawer from './components/cart/CartDrawer';
 import Navbar from './components/common/Navbar';
-import Footer from './components/common/footer';
+import Footer from './components/common/Footer';
 import HomePage from './pages/customer/HomePage';
 import ProductDetailPage from './pages/customer/ProductDetailPage';
 import LoginPage from './pages/auth/LoginPage';
