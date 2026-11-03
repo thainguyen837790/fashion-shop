@@ -4,5 +4,6 @@ pydantic==2.6.4
 torch==2.2.1
 transformers==4.38.2
 underthesea==6.8.0
+pyvi==0.1.1
 scikit-learn==1.4.1.post1
 python-dotenv==1.0.1

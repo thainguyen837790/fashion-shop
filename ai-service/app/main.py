@@ -3,7 +3,7 @@ import re
 from typing import List, Optional
 from fastapi import FastAPI, Header, HTTPException, status
 from pydantic import BaseModel
-from app.preprocessing import clean_text
+from app.sentiment import SentimentModel
 
 app = FastAPI(title="Fashion Sentiment Analysis Service")
 INTERNAL_KEY = os.getenv("INTERNAL_API_KEY", "fashion_secret_key_2026")
@@ -33,17 +33,12 @@ class PredictResponse(BaseModel):
     aspects: List[AspectResult]
     modelVersion: str
 
-# TODO: Tải PhoBERT / Pipeline tại đây khi khởi động
-def infer_sentiment(text: str):
-    # Dummy mock model (thay thế bằng model.predict thực tế)
-    cleaned = clean_text(text)
-    if any(w in cleaned for w in ["xấu", "tệ", "chật", "mỏng tanh", "thất vọng"]):
-        return "negative", 0.89
-    return "positive", 0.92
+MODEL_VERSION = "phobert-fashion-v1"
+sentiment_model = SentimentModel()
 
 @app.get("/health")
 def health_check():
-    return {"status": "ok", "modelVersion": "phobert-v1"}
+    return {"status": "ok", "modelVersion": MODEL_VERSION}
 
 @app.post("/predict", response_model=PredictResponse)
 def predict(payload: PredictRequest, x_internal_key: Optional[str] = Header(None)):
@@ -51,17 +46,17 @@ def predict(payload: PredictRequest, x_internal_key: Optional[str] = Header(None
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Key")
     
     text = payload.text
-    overall_label, overall_score = infer_sentiment(text)
+    overall_label, overall_score = sentiment_model.predict(text)
     
     # Tách mệnh đề theo dấu câu và từ nối (nhưng, tuy nhiên, mà)
     clauses = re.split(r'[,.\n]| nhưng | tuy nhiên | mà ', text, flags=re.IGNORECASE)
     aspect_results = []
     
     for clause in clauses:
-        clause_clean = clean_text(clause)
+        clause_clean = clause.lower()
         for aspect, keywords in ASPECT_KEYWORDS.items():
             if any(k in clause_clean for k in keywords):
-                lbl, sc = infer_sentiment(clause)
+                lbl, sc = sentiment_model.predict(clause)
                 aspect_results.append(AspectResult(aspect=aspect, label=lbl, score=sc))
                 break
 
@@ -69,5 +64,5 @@ def predict(payload: PredictRequest, x_internal_key: Optional[str] = Header(None
         label=overall_label,
         score=overall_score,
         aspects=aspect_results,
-        modelVersion="phobert-v1"
+        modelVersion=MODEL_VERSION
     )

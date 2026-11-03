@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-gray-50 text-gray-900;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+/* ===== Auth animations ===== */
+@keyframes auth-rise {
+  from { opacity: 0; transform: translateY(18px); filter: blur(6px); }
+  to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
+}
+@keyframes auth-card-in {
+  from { opacity: 0; transform: translateY(24px) scale(0.985); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes auth-kenburns {
+  0%   { transform: scale(1.02) translate3d(0, 0, 0); }
+  100% { transform: scale(1.12) translate3d(-1.5%, -1%, 0); }
+}
+@keyframes auth-shine {
+  0%   { transform: translateX(0) skewX(-12deg); opacity: 0; }
+  20%  { opacity: 1; }
+  100% { transform: translateX(420%) skewX(-12deg); opacity: 0; }
+}
+@keyframes auth-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+@keyframes auth-orb {
+  0%, 100% { transform: translate(0, 0); }
+  50%      { transform: translate(40px, 30px); }
+}
+@keyframes auth-line {
+  from { opacity: 0; transform: translateY(100%); clip-path: inset(0 0 100% 0); }
+  to   { opacity: 1; transform: translateY(0);    clip-path: inset(0 0 0 0); }
+}
+@keyframes auth-progress {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+.auth-card { animation: auth-card-in 0.9s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+.auth-rise {
+  opacity: 0;
+  animation: auth-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0s) forwards;
+}
+
+.auth-line {
+  opacity: 0;
+  animation: auth-line 0.9s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0s) forwards;
+}
+
+.auth-kenburns {
+  animation: auth-kenburns 18s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.auth-shine { animation: auth-shine 7s ease-in-out 1.5s infinite; }
+
+.auth-float {
+  opacity: 0;
+  animation:
+    auth-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0s) forwards,
+    auth-float 6s ease-in-out calc(var(--d, 0s) + 1s) infinite;
+}
+.auth-float-alt {
+  opacity: 0;
+  animation:
+    auth-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0s) forwards,
+    auth-float 7.5s ease-in-out calc(var(--d, 0s) + 1.5s) infinite reverse;
+}
+
+.auth-orb      { animation: auth-orb 14s ease-in-out infinite; }
+.auth-orb-slow { animation: auth-orb 20s ease-in-out infinite reverse; }
+
+.auth-progress {
+  transform: scaleX(0);
+  animation: auth-progress 5s linear 1.4s infinite;
+}
+
+.auth-grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Tôn trọng người dùng giảm chuyển động */
+@media (prefers-reduced-motion: reduce) {
+  .auth-card, .auth-rise, .auth-line, .auth-kenburns, .auth-shine,
+  .auth-float, .auth-float-alt, .auth-orb, .auth-orb-slow, .auth-progress {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

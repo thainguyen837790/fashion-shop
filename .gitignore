@@ -1,0 +1,32 @@
+venv/
+models/*.joblib
+__pycache__/
+
+# Keep the local database backup out of Git.
+server/backups/
+*.dump
+
+# Local secrets, dependencies, and generated runtime files
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+**/node_modules/
+**/venv/
+**/.venv/
+**/__pycache__/
+*.py[cod]
+client/dist/
+ai-service/data/shopee_user_data/
+ai-service/saved_phobert_fashion/
+ai-service/results_phobert/
+*.joblib
+
+# Keep local review datasets and training splits out of the public source push.
+ai-service/data/*reviews*.csv
+ai-service/data/errors*.csv
+ai-service/data/split*.csv
+data/*.csv
+clothing_reviews_tiki.csv
