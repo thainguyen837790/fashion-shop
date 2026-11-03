@@ -98,6 +98,20 @@ Gọi `GET http://localhost:8000/health` để xem trạng thái. Gọi `POST ht
 
 Nếu mô hình được lưu ở vị trí khác, đặt biến môi trường `SENTIMENT_MODEL_DIR` trỏ tới thư mục đó trước khi khởi động API.
 
+### Tải model từ Hugging Face Hub khi khởi động API
+
+Đặt `HF_MODEL_ID` thành ID repo model, ví dụ `thai837790/thaitrinh-sentiment`. Khi biến này được khai báo, API dùng model trên Hub thay cho thư mục local. Repo public không cần token; với repo private, đặt `HF_TOKEN` bằng một token có quyền đọc trong phần Secrets của máy chủ. Không commit token vào GitHub.
+
+Ví dụ chạy local trong PowerShell:
+
+```powershell
+$env:HF_MODEL_ID = "thai837790/thaitrinh-sentiment"
+$env:HF_TOKEN = "hf_token_cua_ban" # bỏ dòng này nếu repo public
+python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+Transformers tải model về cache Hugging Face khi API khởi động. Lần khởi động đầu tiên cần mạng và có thể lâu hơn vì model weights khoảng 540 MB. Trên Cloud Run, đặt `HF_MODEL_ID` ở Variables và đặt `HF_TOKEN` ở Secrets nếu repo private.
+
 ## 8. Cải thiện dữ liệu
 
 Để tăng độ tin cậy:

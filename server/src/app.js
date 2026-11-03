@@ -13,7 +13,28 @@ const paymentRoutes = require('./routes/payment.routes');
 
 const app = express();
 
-app.use(cors());
+const isProduction = process.env.NODE_ENV === 'production';
+const allowedOrigins = (process.env.CORS_ALLOWED_ORIGINS || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+if (isProduction) {
+  const requiredEnv = ['DATABASE_URL', 'JWT_SECRET', 'CORS_ALLOWED_ORIGINS', 'AI_SERVICE_URL', 'INTERNAL_API_KEY'];
+  const missingEnv = requiredEnv.filter((key) => !process.env[key]);
+  if (missingEnv.length) {
+    throw new Error(`Thiếu biến môi trường production: ${missingEnv.join(', ')}`);
+  }
+}
+
+app.use(cors({
+  origin(origin, callback) {
+    const localOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173'];
+    const origins = allowedOrigins.length ? allowedOrigins : localOrigins;
+    if (!origin || origins.includes(origin)) return callback(null, true);
+    return callback(new Error('Origin không được phép truy cập API'));
+  },
+}));
 app.use(express.json());
 
 // Khai báo các Route

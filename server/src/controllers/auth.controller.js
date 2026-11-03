@@ -8,6 +8,8 @@ const prisma = require('../db/prisma');
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const signToken = (user) => {
+  const secret = process.env.JWT_SECRET || (process.env.NODE_ENV === 'production' ? null : 'fashion-shop-secret');
+  if (!secret) throw new Error('JWT_SECRET chưa được cấu hình');
   return jwt.sign(
     {
       id: user.id,
@@ -16,7 +18,7 @@ const signToken = (user) => {
       role: user.role,
       full_name: user.full_name,
     },
-    process.env.JWT_SECRET || 'fashion-shop-secret',
+    secret,
     { expiresIn: '7d' }
   );
 };

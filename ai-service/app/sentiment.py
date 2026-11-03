@@ -42,13 +42,24 @@ class SentimentModel:
     def __init__(self, model_dir: str | None = None):
         default_dir = Path(__file__).resolve().parents[1] / "saved_phobert_fashion"
         self.model_dir = Path(model_dir or os.getenv("SENTIMENT_MODEL_DIR", str(default_dir)))
-        if not self.model_dir.is_dir():
+        model_id = os.getenv("HF_MODEL_ID", "").strip()
+        model_source = model_id or str(self.model_dir)
+        if not model_id and not self.model_dir.is_dir():
             raise FileNotFoundError(
-                f"Không tìm thấy mô hình tại {self.model_dir}. Hãy chạy train_sentiment_phobert.py trước."
+                f"Không tìm thấy mô hình tại {self.model_dir}. Hãy train model hoặc cấu hình HF_MODEL_ID."
             )
+
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.tokenizer = AutoTokenizer.from_pretrained(str(self.model_dir), use_fast=False)
-        self.model = AutoModelForSequenceClassification.from_pretrained(str(self.model_dir))
+        hf_token = os.getenv("HF_TOKEN") or None
+        self.tokenizer = AutoTokenizer.from_pretrained(
+            model_source,
+            use_fast=False,
+            token=hf_token,
+        )
+        self.model = AutoModelForSequenceClassification.from_pretrained(
+            model_source,
+            token=hf_token,
+        )
         self.model.to(self.device)
         self.model.eval()
 

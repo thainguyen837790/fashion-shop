@@ -1,10 +1,10 @@
 const jwt = require('jsonwebtoken');
 const prisma = require('../db/prisma');
 
+const isProduction = process.env.NODE_ENV === 'production';
 const KNOWN_SECRETS = [
   process.env.JWT_SECRET,
-  'fashion-shop-secret',
-  'fashion_secret_key_jwt_2026',
+  ...(!isProduction ? ['fashion-shop-secret', 'fashion_secret_key_jwt_2026'] : []),
 ].filter(Boolean);
 
 const authenticate = async (req, res, next) => {
@@ -30,7 +30,7 @@ const authenticate = async (req, res, next) => {
   }
 
   // 2. Nếu verify thất bại, decode lấy payload để đối chiếu DB
-  if (!decoded) {
+  if (!decoded && !isProduction) {
     try {
       decoded = jwt.decode(token);
     } catch (e) {

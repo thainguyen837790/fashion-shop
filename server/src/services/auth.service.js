@@ -46,9 +46,11 @@ const login = async ({ email, password }) => {
     throw error;
   }
 
+  const secret = process.env.JWT_SECRET || (process.env.NODE_ENV === 'production' ? null : 'secret');
+  if (!secret) throw new Error('JWT_SECRET chưa được cấu hình');
   const token = jwt.sign(
     { id: user.id, email: user.email, role: user.role, full_name: user.full_name },
-    process.env.JWT_SECRET || 'secret',
+    secret,
     { expiresIn: '7d' }
   );
 

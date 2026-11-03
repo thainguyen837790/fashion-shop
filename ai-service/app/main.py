@@ -3,10 +3,18 @@ import re
 from typing import List, Optional
 from fastapi import FastAPI, Header, HTTPException, status
 from pydantic import BaseModel
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from app.sentiment import SentimentModel
 
 app = FastAPI(title="Fashion Sentiment Analysis Service")
-INTERNAL_KEY = os.getenv("INTERNAL_API_KEY", "fashion_secret_key_2026")
+INTERNAL_KEY = os.getenv("INTERNAL_API_KEY")
+if not INTERNAL_KEY:
+    if os.getenv("K_SERVICE"):
+        raise RuntimeError("INTERNAL_API_KEY phải được cấu hình trong môi trường Cloud Run")
+    INTERNAL_KEY = "fashion_secret_key_2026"
 
 # Từ khóa khía cạnh theo đặc tả mục 7.4
 ASPECT_KEYWORDS = {
