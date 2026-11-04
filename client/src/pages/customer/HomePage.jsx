@@ -758,7 +758,7 @@ export default function HomePage() {
 
                       {/* Nút: mobile luôn hiện, desktop trượt lên khi hover */}
                       <span className="mt-4 inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-white/60 bg-white/10 px-4 sm:px-5 py-2 text-[11px] sm:text-xs font-black uppercase tracking-[0.15em] text-white backdrop-blur-md transition-all duration-500 group-hover:bg-[#1b3c96] group-hover:border-[#1b3c96] lg:translate-y-4 lg:opacity-0 lg:group-hover:translate-y-0 lg:group-hover:opacity-100">
-                        Trải nghiệm ngay
+                        Xem sản phẩm
                         <svg
                           className="w-[1em] h-[1em] transition-transform duration-300 group-hover:translate-x-1"
                           viewBox="0 0 24 24"
